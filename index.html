@@ -7,25 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
 
-  <body style="height: 100%; margin: 0;">
+  <body style="height: 100%; margin: 0; overflow: hidden;">
     <script>
       (async () => {
+        // 79 refers to "currently-live"
+        const camGroupId = 79;
         const timeMillis = new Date().getTime();
 
-        // 79 refers to "currently-live"
-        const cam = await fetch(
-          `https://omega.explore.org/api/get_cam_group_info.json?t=${timeMillis}&id=79`
+        const camGroupResult = await fetch(
+          `https://omega.explore.org/api/get_cam_group_info.json?t=${timeMillis}&id=${camGroupId}`
         );
 
-        const camJson = await cam.json();
+        const camGroup = await camGroupResult.json();
 
-        const activeFeeds = camJson.data.feeds.filter(
+        // only want active feeds
+        const activeFeeds = camGroup.data.feeds.filter(
           feed => !feed.is_inactive
         );
 
+        // choose a random one...
         const randomFeed =
           activeFeeds[Math.floor(Math.random() * activeFeeds.length)];
 
+        // and shove it into the page
         document.body.innerHTML = `<iframe src="${
           randomFeed.large_feed_html
         }" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen width="100%" height="100%"></iframe>`;
