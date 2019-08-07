@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>Random Nature Stream</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body style="height: 100%; margin: 0;">
+    <script>
+      (async () => {
+        const timeMillis = new Date().getTime();
+
+        // 79 refers to "currently-live"
+        const cam = await fetch(
+          `https://omega.explore.org/api/get_cam_group_info.json?t=${timeMillis}&id=79`
+        );
+
+        const camJson = await cam.json();
+
+        const activeFeeds = camJson.data.feeds.filter(
+          feed => !feed.is_inactive
+        );
+
+        const randomFeed =
+          activeFeeds[Math.floor(Math.random() * activeFeeds.length)];
+
+        document.body.innerHTML = `<iframe src="${
+          randomFeed.large_feed_html
+        }" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen width="100%" height="100%"></iframe>`;
+      })();
+    </script>
+  </body>
+</html>
